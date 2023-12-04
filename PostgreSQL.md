@@ -28,59 +28,69 @@ from public.example_table;
 
 Where values satisfy conditions
 
-```select first_name, last_name, weight
+```
+select first_name, last_name, weight
 from public.example_table 
 where   first_name = 'Anders'; 
 ```
-```select first_name, height, weight 
+```
+select first_name, height, weight 
 from public.example_table 
 where height > 169;
 ```
 
 Comparison and Logical operators (and, or)
 
-```select first_name, height, weight
+```
+select first_name, height, weight
 from public.example_table
 where (height > 170) and (first_name = 'Anders'); 
 ```
 
-```select first_name, height, weight
+```
+select first_name, height, weight
 from public.example_table
 where (height > 170) or (first_name = 'Anders')
 ```
 
 Comparison and Logical operators (between, not)
 
-```select first_name, height, date_birth
+```
+select first_name, height, date_birth
 from public.example_table
 where date_birth between '1989-06-21' and '2001-06-22';
 ```
 
-```select first_name, height, date_birth
+```
+select first_name, height, date_birth
 from public.example_table
 where date_birth not between '1989-06-21' and '2001-06-22';
 ```
 
 Order by values in column 
 
-```select first_name, date_birth
+```
+select first_name, date_birth
 from public.example_table
 order by date_birth;
 ```
 
-```select first_name, date_birth
+```
+select first_name, date_birth
 from public.example_table
 order by date_birth desc;
 ```
 
 Order by values across two columns
 
-```select first_name, height
+```
+select first_name, height
 from public.example_table
 order by first_name, height;
 ```
 
-```select first_name, height
+```
+select first_name, height
 from public.example_table
 order by height, first_name;
 ```
