@@ -1,7 +1,7 @@
 **GIT I**
 
 #### Setting up GIT credentials
-We can configure git with our user information from the terminal by running a set of git commands:
+We can configure git with our user information from the terminal by running a set of git commands. Put them directly in the 'Terminal' in R:
 
 ```bash 
 git config --global user.name Peterbajhogh
