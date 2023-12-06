@@ -1,4 +1,5 @@
 **NOTES**
+
 View: View definition is stored as a database object but no data is stored in association with the view
 Advantages of view
  - Can store complex queries
@@ -40,7 +41,7 @@ Delete the inserted value from the department table
 delete
 from bi.Department 
 where department_code = 5;
-``
+```
 Delete a View
 ```
 drop view bi.vw_dimcurrency;
@@ -54,6 +55,8 @@ from bi.Department;
 
 select * from bi.vw_department vd;
 drop view bi.vw_Department; 
+```
+
 
 Give column names to view alternative II
 ```
