@@ -117,13 +117,18 @@ Carefully read the documentation for sliderInput() to figure out how to create a
 
 **Solution:**
 ```
-sliderInput(
-"dates",
-"When should we deliver?",
-min = as.Date("2019-08-09"),
-max = as.Date("2019-08-16"),
-value = as.Date("2019-08-10")
+ui <- fluidPage(
+my_slider <- sliderInput("my_slider", 
+                         "When should we deliver?",
+                         min = as.Date("2020-09-16"),
+                         max = as.Date("2020-09-23"),
+                         value = as.Date("2020-09-17")
+                         )
 )
+
+server <- function(input, output) {}
+
+shinyApp(ui, server)
 ```
 ____
 **Excercise 8:**
