@@ -1,3 +1,9 @@
+```
+library(shiny)
+library(ggplot2)
+```
+
+
 #### Single Page Layout
 
 <img width="412" alt="image" src="https://github.com/Peterbajhogh/Exam2/assets/144667170/9b401309-15de-40f3-9124-9158e4204b9b">
