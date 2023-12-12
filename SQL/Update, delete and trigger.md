@@ -44,6 +44,9 @@ student_name  = 'Henrik';
 ## Delete 
 
 **1. Remove from table holding foreign key - to not violate fk constraint**
+
+We always start be deleting values in the child entity (the table holding the FK).
+
 ```
 delete 
 from bi_four.student_course sc   
