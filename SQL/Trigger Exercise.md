@@ -1,9 +1,11 @@
 ## 1 Create the schema.
 ```
 --- SCD type 7
+
 drop schema if exists bi_trigger cascade;
 
 create schema bi_trigger;
+
 
 --- Create customer_history table
 create table bi_trigger.customer_history (
@@ -36,6 +38,7 @@ values (default, 'HL Road Frame - Black, 58', 'Black'),
        (default, 'Long-Sleeve Logo Jersey, L', 'Multi'),
        (default, 'Road-150, 52', 'Red')
 
+
 ---- Create customer_current table
 create table bi_trigger.customer_current (
 	customer_durable_sk serial primary key,
@@ -47,6 +50,7 @@ create table bi_trigger.customer_current (
 insert into bi.customer_current
 values (1, 'Donald', 67133, '2023-11-09'),
        (2, 'Victoria', 46908, '2023-10-10');
+
 
 ---- Create fact table
 create table bi_trigger.fact_sale (
@@ -78,7 +82,9 @@ create or replace function postcode_change()
   as  
 $$  
 begin  
-    if new.location_postcode <> old.location_postcode then  
+    if new.location_postcode <> old.location_postcode then
+
+
     	 --- Update ineffective date and current indicator on old row
          update bi_trigger.customer_history    
 		 set ineffective_date = current_date,
@@ -86,6 +92,8 @@ begin
          where customer_sk = (select max(customer_sk) 
 		                             from bi_trigger.customer_history  ch 
                                 	 where (ch.customer_durable_sk = old.customer_durable_sk));
+
+
     	 --- Insert new values in new row
     	 insert into bi_trigger.customer_history(customer_sk, customer_durable_sk,
          							 effective_date, ineffective_date, 
