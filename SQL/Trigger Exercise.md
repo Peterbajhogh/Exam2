@@ -85,7 +85,7 @@ begin
     if new.location_postcode <> old.location_postcode then
 
 
-    	 --- Update ineffective date and current indicator on old row
+--- Update ineffective date and current indicator on old row
          update bi_trigger.customer_history    
 		 set ineffective_date = current_date,
 		 	 current_indicator = '0'
@@ -94,7 +94,7 @@ begin
                                 	 where (ch.customer_durable_sk = old.customer_durable_sk));
 
 
-    	 --- Insert new values in new row
+--- Insert new values in new row
     	 insert into bi_trigger.customer_history(customer_sk, customer_durable_sk,
          							 effective_date, ineffective_date, 
          							 current_indicator, firstname, location_postcode)  
