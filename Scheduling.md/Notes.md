@@ -9,6 +9,9 @@ ______
 ## **CronR schedule**
 ![image](https://github.com/Peterbajhogh/Exam2/assets/144667170/0ca7582f-7474-4684-99dc-5ec7cc5ea0ac)
 
+<img width="1134" alt="image" src="https://github.com/Peterbajhogh/Exam2/assets/144667170/d286daca-d7f8-4432-99e1-33914360a4f7">
+
+
 ![image](https://github.com/Peterbajhogh/Exam2/assets/144667170/2194b50a-d9bd-464a-ae8f-fe91518471d6)
 
 ## **Saving/loading Crontab and removing jobs**
