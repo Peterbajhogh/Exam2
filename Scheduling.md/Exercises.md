@@ -1,4 +1,65 @@
+## From Exam Assignment 2
+
+**Start by making the script we want to schedule**
+
+To get the script running, we have to select what script we want to run. We use the ```increment.one.R```as template. 
+We have to get the variable "date_time", so we start by running this inside the ```increment_one.R``` 
 ```
+date_time <- format(Sys.time(), digits = 0)
+```
+
+After this, we edit the ```increment.one.R```file so it fits the current folder and the output we want etc.
+```
+# Check if "increment_one.rds" exists
+if(file.exists("/home/rstudio/exam/increment_one.rds")){
+
+  # If "increment_one.rds exists then we read it into memory
+  increment_one <- readRDS(file = "/home/rstudio/exam/increment_one.rds")
+
+  # The R object is saved to the disk
+  saveRDS(increment_one, file = "/home/rstudio/exam/increment_one.rds")
+
+  # We print the datetime and the value of increment_one.
+  # This will be captured by the cronR logger and written to the .log file
+  print(paste0(" Process complete at: ", date_time))
+```
+
+The final output for the file we wish to schedule is therefor:
+```
+# Get the current datetime
+date_time <- format(Sys.time(), digits = 0)
+ 
+# Check if "increment_one.rds" exists
+if(file.exists("/home/rstudio/exam/increment_one.rds")){
+
+  # If "increment_one.rds exists then we read it into memory
+  increment_one <- readRDS(file = "/home/rstudio/exam/increment_one.rds")
+
+  # The R object is saved to the disk
+  saveRDS(increment_one, file = "/home/rstudio/exam/increment_one.rds")
+
+  # We print the datetime and the value of increment_one.
+  # This will be captured by the cronR logger and written to the .log file
+  print(paste0(" Process complete at: ", date_time))
+```
+
+**Then open seperate rscript to run the file we just made**
+
+Assuming the name of our file is ```increment.one.R```
+
+
+```
+library(cronR)
+
+# We will execute the increment_one.R script in the following cron jobs
+cmd <- cron_rscript(rscript = "increment_one.R")
+
+# Assuming the current day is Saturday
+cron_add(cmd, frequency = 'minutely', id = 'job7')
+```
+
+## From lectures
+
 library(cronR)
 # We will execute the increment_one.R script in the following cron jobs
 cmd <- cron_rscript(rscript = "increment_one.R")
