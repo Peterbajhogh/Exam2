@@ -117,7 +117,7 @@ create index idx_department_name
 on bi.department(department_name);
 ```
 
-Drop index ```drop index bi.idx_department_name;``
+Drop index ```drop index bi.idx_department_name;```
 
 Testing on id column - already indexes as it is primary key
 
@@ -142,7 +142,8 @@ explain analyze select *
 from bi_five.training t  
 order by t.text;
 ```
-
+```
 explain analyze select *  
 from bi_five.training_indexes ti
 order by ti.text;
+```
