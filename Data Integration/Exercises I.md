@@ -39,6 +39,8 @@ and confirm that your inserts were successful
 ```
 library(RPostgres)
 library(DBI)
+
+
 # Put the credentials in this script
 # Never push credentials to git!! --> use .gitignore on .credentials.R
 source(".credentials.R")
