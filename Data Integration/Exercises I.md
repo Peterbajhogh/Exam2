@@ -96,6 +96,7 @@ library(DBI)
 library(tidyverse)
 library(httr2)
 library(lubridate)
+
 # Investigate which symbols we can search for ---------------
 req <- request("https://alpha-vantage.p.rapidapi.com") %>%
   req_url_path("query") %>%
@@ -103,11 +104,13 @@ req <- request("https://alpha-vantage.p.rapidapi.com") %>%
                 "function" = "SYMBOL_SEARCH",
                 "datatype" = "json") %>%
   req_headers('X-RapidAPI-Key' = '87104e25e5msh06c8b5c6abc80bcp1091e6jsn97e552e79980',
-              'X-RapidAPI-Host' = 'alpha-vantage.p.rapidapi.com') 
+              'X-RapidAPI-Host' = 'alpha-vantage.p.rapidapi.com')
+
 resp <- req %>% 
   req_perform() 
 symbols <- resp %>%
   resp_body_json()
+
 symbols$bestMatches[[1]]
 symbols$bestMatches[[2]]
 ```
@@ -125,6 +128,7 @@ req <- request("https://alpha-vantage.p.rapidapi.com") %>%
                 "output_size" = "compact") %>%
   req_headers('X-RapidAPI-Key' = '87104e25e5msh06c8b5c6abc80bcp1091e6jsn97e552e79980',
               'X-RapidAPI-Host' = 'alpha-vantage.p.rapidapi.com') 
+
 resp <- req %>% 
   req_perform() 
 dat <- resp %>%
@@ -133,9 +137,11 @@ dat <- resp %>%
 # TRANSFORM timestamp to UTC time
 timestamp <- lubridate::ymd_hms(names(dat$`Time Series (60min)`), tz = "US/Eastern")
 timestamp <- format(timestamp, tz = "UTC")
+
 # Prepare data.frame to hold results
 df <- tibble(timestamp = timestamp,
                  open = NA, high = NA, low = NA, close = NA, volume = NA)
+
 # TRANSFORM data into a data.frame
 for (i in 1:nrow(df)) {
   df[i,-1] <- as.data.frame(dat$`Time Series (60min)`[[i]])
@@ -145,11 +151,14 @@ for (i in 1:nrow(df)) {
 # Put the credentials in this script
 # Never push credentials to git!! --> use .gitignore on .credentials.R
 source(".credentials.R")
+
 # Function to send queries to Postgres
 source("psql_queries.R")
+
 # Create a new schema in Postgres on docker
 psql_manipulate(cred = cred_psql_docker, 
                 query_string = "CREATE SCHEMA intg2;")
+
 # Create a table in the new schema 
 psql_manipulate(cred = cred_psql_docker, 
                 query_string = 
@@ -173,6 +182,7 @@ psql_append_df(cred = cred_psql_docker,
 psql_select(cred = cred_psql_docker, 
             query_string = 
               "select * from intg2.prices")
+
 # If you wish, your can delete the schema (all the price data) from Postgres 
 psql_manipulate(cred = cred_psql_docker, 
                 query_string = "drop SCHEMA intg2 cascade;")
