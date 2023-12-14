@@ -1,24 +1,7 @@
 ### MY CREDENTIALS!
 
-Load these in a file ".crendentials.R" if they are not already there.
-```
-cred_psql_docker <- list(dbname = "postgres",
-                         host   = "postgres",
-                         user      = 'postgres',
-                         pass      = 'Peterhogh97',
-                         port = 5432)
+Load the file ".crendentials.R" with my credentials (find on computer or in personal notes).
 
-cred_psql_150 <- list(dbname = "databasename-from-brightspace",
-                         host   = "159.223.30.236",
-                         user      = 'au64040@uni.au.dk',
-                         pass      = 'Brammersgade22!',
-                         port = 6432)
-cred_psql_150_dvd <- list(dbname = "dvdrental",
-                          host   = "159.223.30.236",
-                          user      = 'au64040@uni.au.dk',
-                          pass      = 'Brammersgade22!',
-                          port = 6432)
-```
 ______________
 
 **3. From R, do the following in your Postgres server (i.e. the Postgres
