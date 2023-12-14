@@ -65,11 +65,11 @@ psql_manipulate(cred = cred_psql_docker,
                 query_string = 
 "insert into intg1.Students
 	values (default, 'Peter', 2)
-		  ,(default, 'Klem', '3');")
+		  ,(default, 'Klem', 3);")
 
 # Create an R dataframe
 df <- data.frame(student_name = c("Christian", "Jeff"),
-                 department_code = c("1", "3"))
+                 department_code = c(1, 3))
 # Write the dataframe to a postgres table (columns with default values are skipped)
 
 department <- psql_append_df(cred = cred_psql_docker, 
