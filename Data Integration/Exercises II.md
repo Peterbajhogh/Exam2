@@ -9,15 +9,19 @@ library(RPostgres)
 library(DBI)
 library(httr2)
 library(tidyverse)
+
+
 # .credentials file can be moved to the main rstudio folder to
 # avoid duplication of .credentials in each project directory.
 source("/home/rstudio/.credentials.R")
+
 # Function to send queries to Postgres
 source("psql_queries.R")
 
 # Create a new schema in Postgres on docker
 psql_manipulate(cred = cred_psql_docker, 
                 query_string = "CREATE SCHEMA quotes;")
+
 # Create table to hold metadata about stock prices ----------------------------------------------------
 # Create symbols table with symbols metadata
 psql_manipulate(cred = cred_psql_docker, 
@@ -32,12 +36,14 @@ psql_manipulate(cred = cred_psql_docker,
 	market_close_local_time varchar(20),
 	timezone varchar(50),
 	currency varchar(20));")
+
 # Populate table with metainformation about Microsoft and Tesla -------------------------------
 psql_manipulate(cred = cred_psql_docker, 
                 query_string = 
                   "insert into quotes.symbols
                 values (default, 'MSFT', 'Microsoft Corporation', 'Equity', 'United States', '09:30', '16:00', 'UTC-04', 'currency'),
                        (default, 'TSLA', 'Tesla Inc', 'Equity', 'United States', '09:30', '16:00', 'UTC-04', 'currency');")
+
 
 # Check data has been correctly inserted in symbols table
 psql_select(cred = cred_psql_docker,
@@ -57,6 +63,7 @@ psql_manipulate(cred = cred_psql_docker,
 	volume numeric(30,4),
   constraint fk_symbol foreign key (symbol_fk)
   references quotes.symbols(symbol_sk));")
+
 # Populate price table with Microsoft prices ----------------------------------------------------
 req <- request("https://alpha-vantage.p.rapidapi.com") %>%
   req_url_path("query") %>%
@@ -71,6 +78,7 @@ resp <- req %>%
   req_perform() 
 dat <- resp %>%
   resp_body_json()
+
 # Transform timestamp to UTC time
 timestamp <- lubridate::ymd_hms(names(dat$`Time Series (15min)`), tz = "US/Eastern")
 timestamp <- format(timestamp, tz = "UTC")
@@ -78,15 +86,18 @@ timestamp <- format(timestamp, tz = "UTC")
 df <- tibble(timestamp_utc = timestamp,
              symbol_fk = 1, #
              open = NA, high = NA, low = NA, close = NA, volume = NA)
+
 # TRANSFORM data into a data.frame
 for (i in 1:nrow(df)) {
   df[i,-c(1,2)] <- as.data.frame(dat$`Time Series (15min)`[[i]])
 }
+
 # Load Microsoft price data into prices
 psql_append_df(cred = cred_psql_docker,
                schema_name = "quotes",
                tab_name = "prices",
                df = df)
+
 # Populate price table with Tesla prices ----------------------------------------------------
 req <- request("https://alpha-vantage.p.rapidapi.com") %>%
   req_url_path("query") %>%
@@ -101,25 +112,31 @@ resp <- req %>%
   req_perform() 
 dat <- resp %>%
   resp_body_json()
+
 # Transform timestamp to UTC time
 timestamp <- lubridate::ymd_hms(names(dat$`Time Series (15min)`), tz = "US/Eastern")
 timestamp <- format(timestamp, tz = "UTC")
+
 # Prepare data.frame to hold results
 df <- tibble(timestamp_utc = timestamp,
              symbol_fk = 2, #
              open = NA, high = NA, low = NA, close = NA, volume = NA)
+
 # transform data into a data.frame
 for (i in 1:nrow(df)) {
   df[i,-c(1,2)] <- as.data.frame(dat$`Time Series (15min)`[[i]])
 }
+
 # Load Tesla price data into prices
 psql_append_df(cred = cred_psql_docker,
                schema_name = "quotes",
                tab_name = "prices",
                df = df)
+
 # Check that we have populated the tables as intended ---------------------
 psql_select(cred = cred_psql_docker,
             query_string = "select * from quotes.prices")
+
 # Deleting schema if necessary --------------------------------------------
 #psql_manipulate(cred = cred_psql_docker,
 #               query_string = "drop SCHEMA quotes cascade;")
@@ -147,10 +164,13 @@ library(DBI)
 library(tidyverse)
 library(httr2)
 library(lubridate)
+
 # Load credentials
 source("/home/rstudio/.credentials.R")
+
 # Load functions to communicate with Postgres
 source("/home/rstudio/Integration II/psql_queries.R")
+
 # Extract Microsoft prices  ------------------------------------------
 req <- request("https://alpha-vantage.p.rapidapi.com") %>%
   req_url_path("query") %>%
@@ -169,14 +189,17 @@ dat <- resp %>%
 # TRANSFORM timestamp to UTC time
 timestamp <- lubridate::ymd_hms(names(dat$`Time Series (15min)`), tz = "US/Eastern")
 timestamp <- format(timestamp, tz = "UTC")
+
 # Prepare data.frame to hold results
 df <- tibble(symbol_fk = 1, 
              timestamp_utc = timestamp,
              open = NA, high = NA, low = NA, close = NA, volume = NA)
+
 # TRANSFORM data into a data.frame
 for (i in 1:nrow(df)) {
   df[i,-c(1,2)] <- as.data.frame(dat$`Time Series (15min)`[[i]])
 }
+
 # Get most recent datapoint from database
 latest_tmstmp <- psql_select(cred = cred_psql_docker, 
                              query_string = 
@@ -185,8 +208,10 @@ latest_tmstmp <- psql_select(cred = cred_psql_docker,
                                 where symbol_fk = 1
                                 order by timestamp_utc desc
                                 limit 1;")
+
 # Only new datapoints should be loaded to database
 df <- df[df$timestamp_utc > latest_tmstmp[[1]],]
+
 # Load price data
 print(paste0(round(Sys.time()), ": Updating Microsoft prices")) 
 
@@ -194,6 +219,7 @@ psql_append_df(cred = cred_psql_docker,
                schema_name = "quotes",
                tab_name = "prices",
                df = df)
+
 # Extract Tesla prices  ------------------------------------------
 req <- request("https://alpha-vantage.p.rapidapi.com") %>%
   req_url_path("query") %>%
@@ -212,14 +238,17 @@ dat <- resp %>%
 # TRANSFORM timestamp to UTC time
 timestamp <- lubridate::ymd_hms(names(dat$`Time Series (15min)`), tz = "US/Eastern")
 timestamp <- format(timestamp, tz = "UTC")
+
 # Prepare data.frame to hold results
 df <- tibble(symbol_fk = 2, 
              timestamp_utc = timestamp,
              open = NA, high = NA, low = NA, close = NA, volume = NA)
+
 # TRANSFORM data into a data.frame
 for (i in 1:nrow(df)) {
   df[i,-c(1,2)] <- as.data.frame(dat$`Time Series (15min)`[[i]])
 }
+
 # Get most recent datapoint from database
 latest_tmstmp <- psql_select(cred = cred_psql_docker, 
                              query_string = 
@@ -228,6 +257,7 @@ latest_tmstmp <- psql_select(cred = cred_psql_docker,
                                 where symbol_fk = 2
                                 order by timestamp_utc desc
                                 limit 1;")
+
 # Only new datapoints should be loaded to database
 df <- df[df$timestamp_utc > latest_tmstmp[[1]],]
 # Load price data
@@ -246,10 +276,13 @@ library(DBI)
 library(tidyverse)
 library(httr2)
 library(lubridate)
+
 # Load credentials
 source("/home/rstudio/.credentials.R")
+
 # Load functions to communicate with Postgres
 source("/home/rstudio/Integration II/psql_queries.R")
+
 # Check updating Microsoft ------------------------------------------------
 # Delete some observations from the table
 psql_manipulate(cred = cred_psql_docker,
@@ -262,6 +295,7 @@ psql_manipulate(cred = cred_psql_docker,
                               where symbol_fk = 1
                               order by timestamp_utc desc
                               limit 1);")
+
 # Check most recent prices
 psql_select(cred = cred_psql_docker, 
             query_string = 
@@ -270,8 +304,10 @@ psql_select(cred = cred_psql_docker,
                where symbol_fk = 1
                order by timestamp_utc desc
                limit 5;")
+
 # Run the scheduled function 1 time
 source("2. API_to_db_scheduled.R")
+
 # Check that things has been reinserted
 psql_select(cred = cred_psql_docker, 
             query_string = 
@@ -280,6 +316,7 @@ psql_select(cred = cred_psql_docker,
                where symbol_fk = 1
                order by timestamp_utc desc
                limit 5;")
+
 # Check updating Tesla ------------------------------------------------
 # Delete some observations from the table
 psql_manipulate(cred = cred_psql_docker,
@@ -292,6 +329,7 @@ psql_manipulate(cred = cred_psql_docker,
                               where symbol_fk = 2
                               order by timestamp_utc desc
                               limit 1);")
+
 # Check most recent prices
 psql_select(cred = cred_psql_docker, 
             query_string = 
@@ -300,8 +338,10 @@ psql_select(cred = cred_psql_docker,
                where symbol_fk = 2
                order by timestamp_utc desc
                limit 5;")
+
 # Run the scheduled function 1 time
 source("API_to_db_scheduled.R")
+
 # Check that things has been reinserted
 psql_select(cred = cred_psql_docker, 
             query_string = 
