@@ -94,9 +94,12 @@ from payment;
 ```
 
 **13 The query given below can be written shorter (and easier to read). Rewrite the query below into a new and shorter query that returns the same result.**
-select sum(a.after_vat)
+```select sum(a.after_vat)
 from (select amount*0.8 as after_vat
          from payment) as a;
+```
+
+Solution
 ```
 select sum(amount*0.8) as after_vat
 from payment;
